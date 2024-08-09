@@ -3,7 +3,8 @@
 <meta name="color-scheme" content="dark light" />
 <meta name="robots" content="noindex" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>~</title>
+<link rel="icon" type="image/x-icon" href="home.png" id="favicon">
+<title>Start</title>
 
 <style>
   :root {
@@ -32,35 +33,37 @@
   const CONFIG = {
     commandPathDelimiter: '/',
     commandSearchDelimiter: ' ',
-    defaultSearchTemplate: 'https://duckduckgo.com/?q={}',
-    openLinksInNewTab: true,
+    defaultSearchTemplate: 'https://google.com/search?q={}',
+    openLinksInNewTab: false,
     suggestionLimit: 4,
   };
 
   // prettier-ignore
   const COMMANDS = new Map([
-    ['a', { name: 'Chat', suggestions: ['a/claude', 'a/gemini'], url: 'https://chatgpt.com' }],
+    ['a', { name: 'AI', suggestions: ['a/claude', 'a/gemini'], url: 'https://chatgpt.com' }],
     ['a/claude', { url: 'https://claude.ai/new' }],
     ['a/gemini', { url: 'https://gemini.google.com/app' }],
-    ['b', { name: 'Dribbble', searchTemplate: '/search/{}', url: 'https://dribbble.com/shots/recent' }],
+    ['b', { name: 'Bible', searchTemplate: '/?q={}', url: 'https://esv.literalword.com/' }],
     ['c', { name: 'Calendar', url: 'https://calendar.google.com' }],
-    ['d', { name: 'Drive', url: 'https://drive.google.com/drive/u/0/my-drive' }],
-    ['f', { name: 'Figma', url: 'https://www.figma.com' }],
+    ['d', { name: 'Dribbble', searchTemplate: '/search/{}', url: 'https://dribbble.com/shots/recent' }],
+//  ['d', { name: 'Drive', url: 'https://drive.google.com/drive/u/0/my-drive' }],
+    ['f', { name: 'Facebook', url: 'https://www.facebook.com' }],
     ['g', { name: 'GitHub', searchTemplate: '/search?q={}', url: 'https://github.com' }],
-    ['k', { name: 'Keep', url: 'https://keep.google.com' }],
-    ['n', { name: 'Notion', url: 'https://www.notion.so' }],
-    ['p', { name: 'Proton', searchTemplate: '/u/0/all-mail#keyword={}', suggestions: ['p/drive'], url: 'https://mail.proton.me/u/0/inbox' }],
-    ['p/drive', { url: 'https://drive.proton.me/u/0/' }],
-    ['r', { name: 'Reddit', searchTemplate: '/search/?q={}', suggestions: ['r/r/selfhosted', 'r/r/dataisbeautiful', 'r/r/fujix', 'r/r/leetcode'], url: 'https://reddit.com' }],
-    ['s', { name: 'Supabase', url: 'https://supabase.com/dashboard/projects' }],
-    ['v', { name: 'Vercel', url: 'https://vercel.com/dashboard' }],
-    ['x', { name: 'xvvvyz', suggestions: ['x/pomo', 'x/torrent'], url: 'https://xvvvyz.xyz' }],
-    ['x/pomo', { url: 'https://pomodoro.xvvvyz.xyz' }],
-    ['x/torrent', { url: 'https://torrent.xvvvyz.xyz' }],
+    ['l', { name: 'LinkedIn', url: 'https://linkedin.com/' }],
+    ['m', { name: 'Monarch', url: 'https://app.monarchmoney.com/dashboard' }],
+    ['n', { name: 'Netlify', url: 'https://netlify.com' }],
+    ['o', { name: 'Outlook', url: 'https://outlook.live.com/mail/0/inbox' }],
+//  ['p', { name: 'Proton', searchTemplate: '/u/0/all-mail#keyword={}', suggestions: ['p/drive'], url: 'https://mail.proton.me/u/0/inbox' }],
+//  ['p/drive', { url: 'https://drive.proton.me/u/0/' }],
+    ['r', { name: 'Reddit', searchTemplate: '/search/?q={}', suggestions: ['r/r/floorp', 'r/r/productivity', 'r/r/marketing', 'r/r/daddit'], url: 'https://reddit.com' }],
+    ['s', { name: 'StreamElements', url: 'https://streamelements.com/dashboard' }],
+    ['t', { name: 'Twitch', suggestions: ['t/dashboard'], url: 'https://twitch.tv/' }],
+    ['t/dashboard', { url: 'https://www.twitch.tv/davidvkimball/dashboard' }],
+    ['x', { name: 'X', url: 'https://x.com' }],
     ['y', { name: 'YouTube', searchTemplate: '/results?search_query={}', url: 'https://youtube.com/feed/subscriptions' }],
-    ['0', { name: 'local', suggestions: ['0:54323', '0:54324'], url: 'http://localhost:3000' }],
-    ['0:54323', { url: 'http://localhost:54323' }],
-    ['0:54324', { url: 'http://localhost:54324' }],
+//  ['0', { name: 'local', suggestions: ['0:4322', '0:3000'], url: 'http://localhost:4321' }],
+//  ['0:4322', { url: 'http://localhost:4322' }],
+//  ['0:3000', { url: 'http://localhost:3000' }],
   ]);
 </script>
 
@@ -118,13 +121,14 @@
     @media (min-width: 320px) {
       .commands {
         border-radius: var(--border-radius);
+        font-size: clamp(12px, 1.6vw, 14px);
       }
     }
 
     @media (min-width: 1000px) {
       .commands {
         columns: 5;
-        max-width: 55rem;
+        max-width: 65rem;
       }
     }
   </style>
@@ -168,6 +172,48 @@
   }
 
   customElements.define('commands-component', Commands);
+
+  class Clock {
+  constructor(options) {
+    this._el = document.querySelector('#clock');
+    this._delimiter = options.delimiter;
+    this._twentyFourHourClock = options.twentyFourHourClock;
+    this._setTime = this._setTime.bind(this);
+    this._el.addEventListener('click', options.showForm);
+    this._start();
+  }
+
+  _setTime() {
+    const date = new Date();
+    let hours = date.getHours();
+    let amPm = '';
+
+    if (!this._twentyFourHourClock) {
+      if (hours > 12) hours -= 12;
+      else if (hours === 0) hours = 12;
+      amPm =
+        `&nbsp;<span class="am-pm">` +
+        `${date.getHours() >= 12 ? 'PM' : 'AM'}</span>`;
+    }
+
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    this._el.innerHTML = `${hours}${this._delimiter}${minutes}${amPm}`;
+    this._el.setAttribute('datetime', date.toTimeString());
+  }
+
+  _start() {
+    this._setTime();
+    setInterval(this._setTime, 1000);
+  }
+}
+
+new Clock({
+  delimiter: ':', // Set to colon
+  twentyFourHourClock: false,
+  showForm: () => {},  // No form to show, so we leave this empty
+});
+
+
 </script>
 
 <template id="search-template">
@@ -535,19 +581,97 @@
   }
 
   main {
-    align-items: center;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    min-height: 100dvh;
-    overflow: hidden;
-    padding: calc(var(--space) * 4) var(--space);
-    position: relative;
-    width: 100vw;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Centers the content vertically */
+  min-height: 100vh; /* Ensures the main section takes up full viewport height */
+  box-sizing: border-box; /* Includes padding in the height calculation */
+  padding: 1rem; /* Adjust padding to fine-tune spacing */
+  overflow: hidden; /* Prevents unnecessary scrollbars */
+}
+
+
+
+.clock-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem; /* Tightens the space between the clock and the content below */
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 0; /* Ensure no extra space is pushing the content down */
+}
+
+
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.clock {
+  font-size: 3.5rem; /* Slightly smaller font size for better fit */
+  margin-bottom: 0; /* Reduce any additional space below the clock */
+}
+
+
+.am-pm {
+  font-size: 1rem;
+  letter-spacing: 0.1rem;
+}
+
+
+commands-component,
+search-component {
+  width: 100%;
+  max-width: 65rem; /* Same as before */
+  margin-top: 2rem; /* Adds space between the clock and the other components */
+}
+
+@media (max-width: 600px) {
+  .clock {
+    font-size: 3rem;
   }
+}
+
+
 </style>
 
+<script>
+  function updateFavicon() {
+    const favicon = document.getElementById('favicon');
+    const lightMode = window.matchMedia("(prefers-color-scheme: light)").matches;
+
+    if (lightMode) {
+      favicon.setAttribute('href', 'home.png');
+    } else {
+      favicon.setAttribute('href', 'home-dark.png');
+    }
+  }
+
+  // Initial check
+  updateFavicon();
+
+  // Listen for changes in the color scheme
+  window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", updateFavicon);
+</script>
+
 <main>
-  <commands-component></commands-component>
-  <search-component></search-component>
+  <div class="clock-container">
+    <div class="center"><time class="clock" id="clock"></time></div>
+  </div>
+  <div class="content-container">
+    <commands-component></commands-component>
+    <search-component></search-component>
+  </div>
 </main>
+
